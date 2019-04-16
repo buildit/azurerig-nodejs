@@ -8,7 +8,7 @@ trigger:
 
 variables: 
   docker.imageBase:
-    value: "${imageName}"
+    value: "$(imageName)"
   docker.imageTag:
     value: unstable-$(Build.BuildId)
   storageAccount.key:
@@ -43,7 +43,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Download Test Report'
   inputs:
-    azureSubscription: '${subscription}'
+    azureSubscription: '$(subscription)'
     scriptLocation: inlineScript
     inlineScript: |
      export AZURE_STORAGE_ACCOUNT=$1
@@ -52,7 +52,7 @@ steps:
      export BUILD_NUMBER=$4
      export WORKING_DIRECTORY=$5
      
-     export container_name=${CONTAINER_NAME}
+     export container_name=$(CONTAINER_NAME)
      export blob_name="TestReport_${BUILD_NUMBER}.xml"
      export destination_file=${WORKING_DIRECTORY}/TestReport.xml
      
