@@ -8,7 +8,7 @@ trigger:
 
 variables: 
   docker.imageBase:
-    value: "$(imageName)"
+    value: "test"
   docker.imageTag:
     value: unstable-$(Build.BuildId)
   storageAccount.key:
