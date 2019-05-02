@@ -7,18 +7,12 @@ trigger:
 - master
 
 variables: 
-  docker.imageBase:
-    value: "test"
-  docker.imageTag:
-    value: unstable-$(Build.BuildId)
-  storageAccount.key:
-    value: "STORAGE_ACCOUNT_KEY"
-  storageAccount.name:
-    value: "STORAGE_ACCOUNT_NAME"
-  storageAccount.url:
-    value: "STORAGE_ACCOUNT_URL"
-  storageAccount.containerName:
-    value: "STORAGE_ACCOUNT_CONTAINER_NAME"
+  docker.imageBase: "test"
+  docker.imageTag: unstable-$(Build.BuildId)
+  storageAccount.key: "STORAGE_ACCOUNT_KEY"
+  storageAccount.name: "STORAGE_ACCOUNT_NAME"
+  storageAccount.url: "STORAGE_ACCOUNT_URL"
+  storageAccount.containerName: "STORAGE_ACCOUNT_CONTAINER_NAME"
 
 pool:
   vmImage: 'Ubuntu-16.04'
