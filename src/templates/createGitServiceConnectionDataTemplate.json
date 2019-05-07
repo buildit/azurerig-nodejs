@@ -1,0 +1,20 @@
+{
+    "id": "${gitServiceConnectionId}",
+    "description": "",
+    "administratorsGroup": null,
+    "authorization": {
+        "parameters": {
+            "accessToken": "${gitPAT}"
+        },
+        "scheme": "PersonalAccessToken"
+    },
+    "createdBy": null,
+    "data": null,
+    "name": "${gitServiceConnectionName}",
+    "type": "github",
+    "url": "http://github.com",
+    "readersGroup": null,
+    "groupScopeId": null,
+    "isReady": false,
+    "operationStatus": null
+}

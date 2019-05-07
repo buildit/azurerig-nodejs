@@ -1,0 +1,396 @@
+{
+  "isDeleted": false,
+  "variables": {
+    "docker.imageBase": {
+      "value": "${imageName}"
+    },
+    "storageAccount.containerName": {
+      "value": "dev-test-results"
+    },
+    "storageAccount.name": {
+      "value": "${storageAccountName}"
+    },
+    "storageAccount.url": {
+      "value": "${storageAccountUrl}"
+    },
+    "storageAccount.key": {
+      "value": "${storageAccountKey}"
+    },
+    "app.url": {
+      "value": "${appUrl}"
+    }
+  },
+  "variableGroups": [],
+  "environments": [
+    {
+      "id": 1,
+      "name": "Integration",
+      "rank": 1,
+      "owner": {
+        "id": "${owner_id}"
+      },
+      "variables": {},
+      "variableGroups": [],
+      "preDeployApprovals": {
+        "approvals": [
+          {
+            "rank": 1,
+            "isAutomated": true,
+            "isNotificationOn": false,
+            "id": 1
+          }
+        ],
+        "approvalOptions": {
+          "requiredApproverCount": null,
+          "releaseCreatorCanBeApprover": false,
+          "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+          "enforceIdentityRevalidation": false,
+          "timeoutInMinutes": 0,
+          "executionOrder": "beforeGates"
+        }
+      },
+      "deployStep": {
+        "id": 2
+      },"postDeployApprovals": {
+        "approvals": [
+          {
+            "rank": 1,
+            "isAutomated": true,
+            "isNotificationOn": false,
+            "id": 3
+          }
+        ],
+        "approvalOptions": {
+          "requiredApproverCount": null,
+          "releaseCreatorCanBeApprover": false,
+          "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+          "enforceIdentityRevalidation": false,
+          "timeoutInMinutes": 0,
+          "executionOrder": "afterSuccessfulGates"
+        }
+      },
+      "deployPhases": [
+        {
+          "deploymentInput": {
+            "parallelExecution": {
+              "parallelExecutionType": "none"
+            },
+            "skipArtifactsDownload": false,
+            "artifactsDownloadInput": {
+              "downloadInputs": []
+            },
+            "queueId": "${agentQueueId}",
+            "demands": [],
+            "enableAccessToken": false,
+            "timeoutInMinutes": 0,
+            "jobCancelTimeoutInMinutes": 1,
+            "condition": "succeeded()",
+            "overrideInputs": {}
+          },
+          "rank": 1,
+          "phaseType": "agentBasedDeployment",
+          "name": "Run on agent",
+          "refName": null,
+          "workflowTasks": [
+            {
+              "environment": {},
+              "taskId": "497d490f-eea7-4f2b-ab94-48d9c1acdcb1",
+              "version": "4.*",
+              "name": "Azure App Service Deploy",
+              "refName": "",
+              "enabled": true,
+              "alwaysRun": false,
+              "continueOnError": false,
+              "timeoutInMinutes": 0,
+              "definitionType": "task",
+              "overrideInputs": { 
+              },
+              "condition": "succeeded()",
+              "inputs": {
+                "ConnectionType": "AzureRM",
+                "ConnectedServiceName": "${serviceConnectionId}",
+                "PublishProfilePath": "$(System.DefaultWorkingDirectory)/**/*.pubxml",
+                "PublishProfilePassword": "",
+                "WebAppKind": "webAppContainer",
+                "WebAppName": "${appName}",
+                "DeployToSlotOrASEFlag": "false",
+                "ResourceGroupName": "",
+                "SlotName": "production",
+                "DockerNamespace": "${registryAddress}",
+                "DockerRepository": "${imageName}",
+                "DockerImageTag": "${imageTag}",
+                "VirtualApplication": "",
+                "Package": "$(System.DefaultWorkingDirectory)/**/*.zip",
+                "RuntimeStack": "",
+                "RuntimeStackFunction": "",
+                "StartupCommand": "",
+                "ScriptType": "",
+                "InlineScript": ":: You can provide your deployment commands here. One command per line.",
+                "ScriptPath": "",
+                "WebConfigParameters": "",
+                "AppSettings": "",
+                "ConfigurationSettings": "",
+                "UseWebDeploy": "false",
+                "DeploymentType": "webDeploy",
+                "TakeAppOfflineFlag": "true",
+                "SetParametersFile": "",
+                "RemoveAdditionalFilesFlag": "false",
+                "ExcludeFilesFromAppDataFlag": "true",
+                "AdditionalArguments": "-retryAttempts:6 -retryInterval:10000",
+                "RenameFilesFlag": "true",
+                "XmlTransformation": "false",
+                "XmlVariableSubstitution": "false",
+                "JSONFiles": ""
+              }
+            },
+            {
+              "environment": {},
+              "taskId": "e28912f1-0114-4464-802a-a3a35437fd16",
+              "version": "1.*",
+              "name": "Build an image",
+              "refName": "",
+              "enabled": true,
+              "alwaysRun": false,
+              "continueOnError": false,
+              "timeoutInMinutes": 0,
+              "definitionType": "task",
+              "overrideInputs": {},
+              "condition": "succeeded()",
+              "inputs": {
+                "containerregistrytype": "Azure Container Registry",
+                "dockerRegistryEndpoint": "",
+                "azureSubscriptionEndpoint": "${serviceConnectionId}",
+                "azureContainerRegistry": "${registryAddress}",
+                "command": "Build an image",
+                "dockerFile": "$(System.DefaultWorkingDirectory)/_$(Build.DefinitionName)/Source Code/Dockerfile_e2e_test",
+                "arguments": "--no-cache --build-arg STORAGE_ACCT_URL=\"$(storageAccount.url)\" --build-arg STORAGE_ACCT_KEY=\"$(storageAccount.key)\" --build-arg BUILD_NUMBER=\"$(Build.BuildNumber)\" --build-arg APP_URL=\"$(app.Url)\" ",
+                "pushMultipleImages": "false",
+                "tagMultipleImages": "false",
+                "imageName": "$(docker.imageBase):e2e-test-$(Build.BuildId)",
+                "imageNamesPath": "",
+                "qualifyImageName": "true",
+                "includeSourceTags": "false",
+                "includeLatestTag": "false",
+                "addDefaultLabels": "true",
+                "useDefaultContext": "true",
+                "buildContext": "",
+                "imageDigestFile": "",
+                "containerName": "",
+                "ports": "",
+                "volumes": "",
+                "envVars": "",
+                "workingDirectory": "",
+                "entrypointOverride": "",
+                "containerCommand": "",
+                "runInBackground": "true",
+                "restartPolicy": "no",
+                "maxRestartRetries": "",
+                "dockerHostEndpoint": "",
+                "enforceDockerNamingConvention": "true",
+                "memoryLimit": ""
+              }
+            },
+            {
+              "environment": {},
+              "taskId": "46e4be58-730b-4389-8a2f-ea10b3e5e815",
+              "version": "1.*",
+              "name": "Download E2E Test Report ",
+              "refName": "",
+              "enabled": true,
+              "alwaysRun": false,
+              "continueOnError": false,
+              "timeoutInMinutes": 0,
+              "definitionType": "task",
+              "overrideInputs": {},
+              "condition": "succeeded()",
+              "inputs": {
+                "connectedServiceNameARM": "${serviceConnectionId}",
+                "scriptLocation":"scriptPath",
+                "scriptPath":"$(System.DefaultWorkingDirectory)/_buildit_digitalrig-metal-azure/scripts/createReleasePipeline/download-test-report.sh",
+                "inlineScript":"",
+                "args": "$(storageAccount.name) $(storageAccount.key) $(storageAccount.containerName) $(Build.BuildNumber) $(System.DefaultWorkingDirectory)",
+                "addSpnToEnvironment": "false",
+                "useGlobalConfig": "false",
+                "cwd": "",
+                "failOnStandardError": "false"
+              }
+            },
+            {
+              "environment": {},
+              "taskId": "0b0f01ed-7dde-43ff-9cbb-e48954daf9b1",
+              "version": "2.*",
+              "name": "Publish Test Results TestReport.xml",
+              "refName": "",
+              "enabled": true,
+              "alwaysRun": false,
+              "continueOnError": false,
+              "timeoutInMinutes": 0,
+              "definitionType": "task",
+              "overrideInputs": {},
+              "condition": "succeeded()",
+              "inputs": {
+                "testRunner": "JUnit",
+                "testResultsFiles": "TestReport.xml",
+                "searchFolder": "$(System.DefaultWorkingDirectory)",
+                "mergeTestResults": "false",
+                "failTaskOnFailedTests": "false",
+                "testRunTitle": "",
+                "platform": "",
+                "configuration": "",
+                "publishRunAttachments": "true"
+              }
+            }
+          ]
+        }
+      ],
+      "environmentOptions": {
+        "emailNotificationType": "OnlyOnFailure",
+        "emailRecipients": "release.environment.owner;release.creator",
+        "skipArtifactsDownload": false,
+        "timeoutInMinutes": 0,
+        "enableAccessToken": false,
+        "publishDeploymentStatus": true,
+        "badgeEnabled": false,
+        "autoLinkWorkItems": false,
+        "pullRequestDeploymentEnabled": false
+      },
+      "demands": [],
+      "conditions": [
+        {
+          "name": "ReleaseStarted",
+          "conditionType": "event",
+          "value": ""
+        }
+      ],
+      "executionPolicy": {
+        "concurrencyCount": 1,
+        "queueDepthCount": 0
+      },
+      "schedules": [],
+      "retentionPolicy": {
+        "daysToKeep": 30,
+        "releasesToKeep": 3,
+        "retainBuild": true
+      },
+      "processParameters": {},
+      "properties": {},
+      "preDeploymentGates": {
+        "id": 0,
+        "gatesOptions": null,
+        "gates": []
+      },
+      "postDeploymentGates": {
+        "id": 0,
+        "gatesOptions": null,
+        "gates": []
+      },
+      "environmentTriggers": []
+      }
+  ],
+  "artifacts": [
+    {
+      "sourceId": "${gitHubServiceConnectionId}:buildit/digitalrig-metal-azure",
+      "type": "GitHub",
+      "alias": "_buildit_digitalrig-metal-azure",
+      "definitionReference": {
+        "branch": {
+          "id": "dev",
+          "name": "dev"
+        },
+        "checkoutNestedSubmodules": {
+          "id": "True",
+          "name": "Any nested submodules within"
+        },
+        "checkoutSubmodules": {
+          "id": "",
+          "name": ""
+        },
+        "connection": {
+          "id": "${gitHubServiceConnectionId}"
+        },
+        "defaultVersionSpecific": {
+          "id": "",
+          "name": ""
+        },
+        "defaultVersionType": {
+          "id": "latestFromBranchType",
+          "name": "Latest from the default branch"
+        },
+        "definition": {
+          "id": "buildit/digitalrig-metal-azure",
+          "name": "buildit/digitalrig-metal-azure"
+        },
+        "fetchDepth": {
+          "id": "",
+          "name": ""
+        },
+        "gitLfsSupport": {
+          "id": "",
+          "name": ""
+        },
+        "artifactSourceDefinitionUrl": {
+          "id": "https://github.com/buildit/digitalrig-metal-azure",
+          "name": ""
+        }
+      },
+      "isRetained": false
+    },
+    {
+      "sourceId": "${projectId}:${pipelineId}",
+      "type": "Build",
+      "alias": "_${pipelineName}",
+      "definitionReference": {
+        "defaultVersionBranch": {
+          "id": "",
+          "name": ""
+        },
+        "defaultVersionSpecific": {
+          "id": "",
+          "name": ""
+        },
+        "defaultVersionTags": {
+          "id": "",
+          "name": ""
+        },
+        "defaultVersionType": {
+          "id": "latestType",
+          "name": "Latest"
+        },
+        "definition": {
+          "id": "${pipelineId}",
+          "name": "${sourcePipelineName}"
+        },
+        "project": {
+          "id": "${projectId}",
+          "name": "${projectName}"
+        },
+        "artifactSourceDefinitionUrl": {
+          "id": "https://dev.azure.com/${orgName}/_permalink/_build/index?collectionId=$(System.CollectionId)&projectId=${projectId}&definitionId=${pipelineId}",
+          "name": ""
+        }
+      },
+      "isPrimary": true,
+      "isRetained": false
+    }
+  ],
+  "triggers": [
+    {
+      "artifactAlias": "${sourcePipelineName}",
+      "triggerConditions": [],
+      "triggerType": "artifactSource"
+    }
+  ],
+  "releaseNameFormat": "Release-$(rev:r)",
+  "tags": [],
+  "pipelineProcess": {
+    "type": "designer"
+  },
+  "properties": {
+    "DefinitionCreationSource": {
+      "$type": "System.String",
+      "$value": "ReleaseNew"
+    }
+  },
+  "name": "${pipelineName}",
+  "path": "\\"
+}

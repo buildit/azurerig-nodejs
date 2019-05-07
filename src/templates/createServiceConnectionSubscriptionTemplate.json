@@ -1,0 +1,23 @@
+{
+    "id": "${serviceConnectionId}",
+    "authorization": {
+        "parameters": {
+            "tenantid": "${tennantId}",
+            "serviceprincipalid": "",
+            "authenticationType": "spnKey",
+            "serviceprincipalkey": ""
+        },
+        "scheme": "ServicePrincipal"
+    },
+    "createdBy": null,
+    "data": {
+        "subscriptionId": "${subscriptionId}",
+        "subscriptionName": "${subscriptionName}",
+        "environment": "AzureCloud",
+        "scopeLevel": "Subscription",
+        "creationMode": "Automatic"
+    },
+    "name": "${connectionName}",
+    "type": "azurerm",
+    "url": "https://management.azure.com/"
+}

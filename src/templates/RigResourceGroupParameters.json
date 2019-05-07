@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_app_name": {
+            "value": "NickRigAppDEV"
+        },
+        "serverfarms_app_plan_name": {
+            "value": "NickRigAppDEV-plan"
+        },
+        "components_appinsights_name": {
+            "value": "NickRigAppDEV-appinsights"
+        },
+        "scheduledqueryrules_app_Error_logged_name": {
+            "value": "Slackbot - Error logged - DEV"
+        },
+        "alertrules_Failure_Anomalies_app_appinsights_name": {
+            "value": "Failure Anomalies - builditSlackbotAppDEV-appinsights"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "id":"${serviceConnectionId}",
+    "authorization":
+    {
+        "parameters":
+        {
+            "tenantid":"${tennantId}",
+            "serviceprincipalid":"",
+            "authenticationType":"spnKey",
+            "serviceprincipalkey":"",
+            "scope":"${resourceGroupId}"
+        },
+        "scheme":"ServicePrincipal"
+    },
+    "data":
+    {
+        "subscriptionId":"${subscriptionId}",
+        "subscriptionName": "${subscriptionName}"
+    },
+    "name":"${connectionName}",
+    "type":"azurerm",
+    "url":"https://management.azure.com/",
+    "isReady":false
+}

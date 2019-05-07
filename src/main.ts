@@ -1,3 +1,5 @@
+/// <reference path="./types/string.d.ts" />
+import sleep from "./extensions/sleep";
 import chalk from "chalk";
 import figlet from "figlet";
 import path from "path";
@@ -5,6 +7,8 @@ import program from "commander";
 import askQuestions from "./questions";
 import DevOpsService from "./DevOpsService";
 import AzureService from "./AzureService";
+import DevOpsRestService from "./DevOpsRestService";
+import "./extensions/string.extensions";
 const clear = require("clear");
 
 const run = async () => {
@@ -12,28 +16,47 @@ const run = async () => {
     //Show introduction
     init();
 
-    //ask questions;
-    const params = await askQuestions();
+     //ask questions;
+     const params = await askQuestions();
 
-    const azureService: AzureService = new AzureService(
-      "",
-      "",
-      ""
-    );
+    //Create Services
+    const devOps = new DevOpsService(params);
+    const devOpsRest = new DevOpsRestService(params);
+    const azureService: AzureService = new AzureService(params);
 
+    //Login:
+    //await azureService.azureLogin();
 
-    var devOps = new DevOpsService(params.azDevOps);
-
+    /*
+    //Create Common ResourceGroup
+    await azureService.createCommonResourceGroup();
 
     //Create DevOps Project
-   // await createProj.createProject(params.azDevOps.projName);
+    await devOps.createProject(params.azDevOps.projName);
 
-    //Create Common ResourceGroup
-    //await azureService.azureLogin();
-    //await azureService.createCommonResourceGroup();
+    await sleep(5000);
 
+    //Create Azure Service Connection
+    await devOpsRest.createServiceConnection(`Azure Service Connection`);
 
-    devOps.createBuildPipeline();
+    //Create Git Serevice Connection
+    await devOpsRest.createGitServiceConnection("Git Connection");
+
+    await sleep(10000);
+
+    //Create Build Dev Pipeline
+    await devOps.createDevBuildPipeline();
+
+    //Create Build Master Pipeline
+    await devOps.createMasterBuildPipeline();
+    
+    //Create Release Pipeline
+    await devOps.createReleasePipeline();
+
+    await sleep (10000);
+    */
+
+   await devOps.createInfrastructurePipeline()
 
   } catch (e) {
     console.log(e);
@@ -51,18 +74,3 @@ const init = () => {
 
 run();
 
-/*
-import * as azdev from "azure-devops-node-api";
-import * as coreInterfaces from "azure-devops-node-api/interfaces/CoreInterfaces";
-import UserInputs from './UserInputs;
-import CreateProject from './CreateProject';
-
-let userInputs = new UserInputs();
-
-var params = await userInputs.getRigParameters();
-
-
-//let createProject = new CreateProject(params.azDevOps);
-
-//createProject.createProject("TestProject");
-*/

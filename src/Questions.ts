@@ -4,6 +4,16 @@ import {RigParameters, AzResources, AzDevOps, GitParams} from "./types/parameter
 const askQuestions = async () => {
   const questions = [
     {
+      name: "TENANT_ID",
+      type: "input",
+      message: "Azure AD TenantID"
+    },
+    {
+      name: "SUBSCRIPTION_ID",
+      type: "input",
+      message: "Subscription to create resource group"
+    },
+    {
       name: "RESOURCE_GROUP_NAME",
       type: "input",
       message: "Base Resource Name must be less than 18 characters "
@@ -38,14 +48,14 @@ const askQuestions = async () => {
   ];
 
   var answers : any = await inquirer.prompt(questions);
-  const { RESOURCE_GROUP_NAME, LOCATION, DEVOPS_USERNAME, DEVOPS_PAT, DEVOPS_PROJ, GITHUB_PAT } = answers;
+  const { TENANT_ID, RESOURCE_GROUP_NAME, LOCATION, DEVOPS_USERNAME, DEVOPS_PAT, DEVOPS_PROJ, GITHUB_PAT, SUBSCRIPTION_ID } = answers;
 
   let appServiceName = `${RESOURCE_GROUP_NAME}AppService`;
 
 
   return new RigParameters(
-    new AzResources(RESOURCE_GROUP_NAME, appServiceName, LOCATION),
-    new AzDevOps(DEVOPS_USERNAME, DEVOPS_PAT, "https://dev.azure.com/BuilditAzureSandbox/", DEVOPS_PROJ, "projId"),
+    new AzResources(TENANT_ID, SUBSCRIPTION_ID, RESOURCE_GROUP_NAME, appServiceName, LOCATION),
+    new AzDevOps(DEVOPS_USERNAME, DEVOPS_PAT, "https://dev.azure.com/BuilditAzureSandbox", DEVOPS_PROJ),
     new GitParams(GITHUB_PAT, "org", "repo"));
 };
 
