@@ -6,7 +6,7 @@
     "environments": [
       {
         "id": 1,
-        "name": "Integration",
+        "name": "Dev",
         "rank": 1,
         "owner": {
           "id": "${owner_id}"
@@ -61,7 +61,7 @@
               "artifactsDownloadInput": {
                 "downloadInputs": []
               },
-              "queueId": 0,
+              "queueId": "${agentQueueId}",
               "demands": [],
               "enableAccessToken": false,
               "timeoutInMinutes": 0,
@@ -90,9 +90,9 @@
                     "inputs": {
                       "connectedServiceNameARM": "${serviceConnectionId}",
                       "scriptLocation": "scriptPath",
-                      "scriptPath": "$(System.DefaultWorkingDirectory)/_buildit_digitalrig-metal-azure/scripts/createReleasePipeline/bashScripts/createResources.sh",
+                      "scriptPath": "$(System.DefaultWorkingDirectory)/_buildit_azurerig-nodejs/src/scripts/createResourceGroup.sh",
                       "inlineScript": "",
-                      "args": "${resourceGroupName}${stage} ${appName}${stage} ${registryAddress} ${imageName}:${imageTag} ${location}",
+                      "args": "${resourceGroupName}Dev ${appName}Dev ${registryAddress} ${imageName}:unstable-latest ${location}",
                       "addSpnToEnvironment": "false",
                       "useGlobalConfig": "false",
                       "cwd": "",
@@ -144,17 +144,299 @@
           "gates": []
         },
         "environmentTriggers": []
-        }
+      },
+      {
+        "id": 2,
+        "name": "Staging",
+        "rank": 2,
+        "owner": {
+          "id": "${owner_id}"
+        },
+        "variables": {},
+        "variableGroups": [],
+        "preDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 1
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": "beforeGates"
+          }
+        },
+        "deployStep": {
+          "id": 2
+        },"postDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 3
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": "afterSuccessfulGates"
+          }
+        },
+        "deployPhases": [
+          {
+            "deploymentInput": {
+              "parallelExecution": {
+                "parallelExecutionType": "none"
+              },
+              "skipArtifactsDownload": false,
+              "artifactsDownloadInput": {
+                "downloadInputs": []
+              },
+              "queueId": "${agentQueueId}",
+              "demands": [],
+              "enableAccessToken": false,
+              "timeoutInMinutes": 0,
+              "jobCancelTimeoutInMinutes": 1,
+              "condition": "succeeded()",
+              "overrideInputs": {}
+            },
+            "rank": 1,
+            "phaseType": "agentBasedDeployment",
+            "name": "Run on agent",
+            "refName": null,
+            "workflowTasks": [
+                  {
+                    "environment": {},
+                    "taskId": "46e4be58-730b-4389-8a2f-ea10b3e5e815",
+                    "version": "1.*",
+                    "name": "Azure CLI: create or update web app service container",
+                    "refName": "",
+                    "enabled": true,
+                    "alwaysRun": false,
+                    "continueOnError": false,
+                    "timeoutInMinutes": 0,
+                    "definitionType": "task",
+                    "overrideInputs": {},
+                    "condition": "succeeded()",
+                    "inputs": {
+                      "connectedServiceNameARM": "${serviceConnectionId}",
+                      "scriptLocation": "scriptPath",
+                      "scriptPath": "$(System.DefaultWorkingDirectory)/_buildit_azurerig-nodejs/src/scripts/createResourceGroup.sh",
+                      "inlineScript": "",
+                      "args": "${resourceGroupName}Stage ${appName}Stage ${registryAddress} ${imageName}:stable-latest ${location}",
+                      "addSpnToEnvironment": "false",
+                      "useGlobalConfig": "false",
+                      "cwd": "",
+                      "failOnStandardError": "false"
+                    }
+                  }
+            ]
+          }
+        ],
+        "environmentOptions": {
+          "emailNotificationType": "OnlyOnFailure",
+          "emailRecipients": "release.environment.owner;release.creator",
+          "skipArtifactsDownload": false,
+          "timeoutInMinutes": 0,
+          "enableAccessToken": false,
+          "publishDeploymentStatus": true,
+          "badgeEnabled": false,
+          "autoLinkWorkItems": false,
+          "pullRequestDeploymentEnabled": false
+        },
+        "demands": [],
+        "conditions": [
+            {
+                "name": "Dev",
+                "conditionType": 2,
+                "value": "4"
+              }
+        ],
+        "executionPolicy": {
+          "concurrencyCount": 1,
+          "queueDepthCount": 0
+        },
+        "schedules": [],
+        "retentionPolicy": {
+          "daysToKeep": 30,
+          "releasesToKeep": 3,
+          "retainBuild": true
+        },
+        "processParameters": {},
+        "properties": {},
+        "preDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": []
+        },
+        "postDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": []
+        },
+        "environmentTriggers": []
+      },
+      {
+        "id": 3,
+        "name": "Production",
+        "rank": 3,
+        "owner": {
+          "id": "${owner_id}"
+        },
+        "variables": {},
+        "variableGroups": [],
+        "preDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 1
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": "beforeGates"
+          }
+        },
+        "deployStep": {
+          "id": 2
+        },"postDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 3
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": "afterSuccessfulGates"
+          }
+        },
+        "deployPhases": [
+          {
+            "deploymentInput": {
+              "parallelExecution": {
+                "parallelExecutionType": "none"
+              },
+              "skipArtifactsDownload": false,
+              "artifactsDownloadInput": {
+                "downloadInputs": []
+              },
+              "queueId": "${agentQueueId}",
+              "demands": [],
+              "enableAccessToken": false,
+              "timeoutInMinutes": 0,
+              "jobCancelTimeoutInMinutes": 1,
+              "condition": "succeeded()",
+              "overrideInputs": {}
+            },
+            "rank": 1,
+            "phaseType": "agentBasedDeployment",
+            "name": "Run on agent",
+            "refName": null,
+            "workflowTasks": [
+                  {
+                    "environment": {},
+                    "taskId": "46e4be58-730b-4389-8a2f-ea10b3e5e815",
+                    "version": "1.*",
+                    "name": "Azure CLI: create or update web app service container",
+                    "refName": "",
+                    "enabled": true,
+                    "alwaysRun": false,
+                    "continueOnError": false,
+                    "timeoutInMinutes": 0,
+                    "definitionType": "task",
+                    "overrideInputs": {},
+                    "condition": "succeeded()",
+                    "inputs": {
+                      "connectedServiceNameARM": "${serviceConnectionId}",
+                      "scriptLocation": "scriptPath",
+                      "scriptPath": "$(System.DefaultWorkingDirectory)/_buildit_azurerig-nodejs/src/scripts/createResourceGroup.sh",
+                      "inlineScript": "",
+                      "args": "${resourceGroupName}Prod ${appName}Prod ${registryAddress} ${imageName}:stable-latest ${location}",
+                      "addSpnToEnvironment": "false",
+                      "useGlobalConfig": "false",
+                      "cwd": "",
+                      "failOnStandardError": "false"
+                    }
+                  }
+            ]
+          }
+        ],
+        "environmentOptions": {
+          "emailNotificationType": "OnlyOnFailure",
+          "emailRecipients": "release.environment.owner;release.creator",
+          "skipArtifactsDownload": false,
+          "timeoutInMinutes": 0,
+          "enableAccessToken": false,
+          "publishDeploymentStatus": true,
+          "badgeEnabled": false,
+          "autoLinkWorkItems": false,
+          "pullRequestDeploymentEnabled": false
+        },
+        "demands": [],
+        "conditions": [
+            {
+                "name": "Staging",
+                "conditionType": 2,
+                "value": "4"
+              }
+        ],
+        "executionPolicy": {
+          "concurrencyCount": 1,
+          "queueDepthCount": 0
+        },
+        "schedules": [],
+        "retentionPolicy": {
+          "daysToKeep": 30,
+          "releasesToKeep": 3,
+          "retainBuild": true
+        },
+        "processParameters": {},
+        "properties": {},
+        "preDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": []
+        },
+        "postDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": []
+        },
+        "environmentTriggers": []
+      }
     ],
     "artifacts": [
       {
-        "sourceId": "${gitServiceConnectionId}:buildit/digitalrig-metal-azure",
+        "sourceId": "${gitServiceConnectionId}:buildit/azurerig-nodejs",
         "type": "GitHub",
-        "alias": "_buildit_digitalrig-metal-azure",
+        "alias": "_buildit_azurerig-nodejs",
         "definitionReference": {
           "branch": {
-            "id": "dev",
-            "name": "dev"
+            "id": "master",
+            "name": "master"
           },
           "checkoutNestedSubmodules": {
             "id": "True",
@@ -176,8 +458,8 @@
             "name": "Latest from the default branch"
           },
           "definition": {
-            "id": "buildit/digitalrig-metal-azure",
-            "name": "buildit/digitalrig-metal-azure"
+            "id": "buildit/azurerig-nodejs",
+            "name": "buildit/azurerig-nodejs"
           },
           "fetchDepth": {
             "id": "",
@@ -188,7 +470,7 @@
             "name": ""
           },
           "artifactSourceDefinitionUrl": {
-            "id": "https://github.com/buildit/digitalrig-metal-azure",
+            "id": "https://github.com/buildit/azurerig-nodejs",
             "name": ""
           }
         },

@@ -100,7 +100,8 @@ export default class {
         sku: {
             name: "Basic"
         },
-        location: this.rigParams.azResources.location
+        location: this.rigParams.azResources.location,
+        adminUserEnabled: true
     };
 
     await manager.registries.create(this.rigParams.azResources.baseResourceGroupName, this.rigParams.azResources.containerRegistryName, opts);

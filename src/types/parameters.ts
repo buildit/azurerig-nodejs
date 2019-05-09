@@ -12,14 +12,6 @@ export class AzResources {
   private _resourceGroupId: string = "";
   private _storageAccountKey: string = "";
 
-  get appName(): string {
-    return `${this.baseResourceGroupName}AppService`;
-  }
-
-  get appUrl(): string{
-    return `https://${this.appName}.azurewebsites.net/`;
-  }
-
   get storageAccountName(): string {
     return `${this.baseResourceGroupName.toLocaleLowerCase()}stgacct`;
   }
@@ -50,6 +42,18 @@ export class AzResources {
 
   set storageAccountKey(value: string){
     this._storageAccountKey = value;
+  }
+
+  get baseAppName(): string{
+    return `${this.baseAppName}AppService`;
+  }
+
+  getAppName(stage: string): string {
+    return `${this.baseAppName}${stage}`;
+  }
+
+  getAppUrl(stage: string): string{
+    return `https://${this.getAppName(stage)}.azurewebsites.net/`;
   }
 
   constructor(

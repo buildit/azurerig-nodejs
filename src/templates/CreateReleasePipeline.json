@@ -114,7 +114,7 @@
                 "WebAppKind": "webAppContainer",
                 "WebAppName": "${appName}",
                 "DeployToSlotOrASEFlag": "false",
-                "ResourceGroupName": "",
+                "ResourceGroupName": "${resourceGroupName}",
                 "SlotName": "production",
                 "DockerNamespace": "${registryAddress}",
                 "DockerRepository": "${imageName}",
@@ -206,7 +206,7 @@
               "inputs": {
                 "connectedServiceNameARM": "${serviceConnectionId}",
                 "scriptLocation":"scriptPath",
-                "scriptPath":"$(System.DefaultWorkingDirectory)/_buildit_digitalrig-metal-azure/scripts/createReleasePipeline/download-test-report.sh",
+                "scriptPath":"$(System.DefaultWorkingDirectory)/_buildit_azurerig-nodejs/src/scripts/download-test-report.sh",
                 "inlineScript":"",
                 "args": "$(storageAccount.name) $(storageAccount.key) $(storageAccount.containerName) $(Build.BuildNumber) $(System.DefaultWorkingDirectory)",
                 "addSpnToEnvironment": "false",
@@ -289,13 +289,13 @@
   ],
   "artifacts": [
     {
-      "sourceId": "${gitHubServiceConnectionId}:buildit/digitalrig-metal-azure",
+      "sourceId": "${gitHubServiceConnectionId}:buildit/azurerig-nodejs",
       "type": "GitHub",
-      "alias": "_buildit_digitalrig-metal-azure",
+      "alias": "_buildit_azurerig-nodejs",
       "definitionReference": {
         "branch": {
-          "id": "dev",
-          "name": "dev"
+          "id": "master",
+          "name": "master"
         },
         "checkoutNestedSubmodules": {
           "id": "True",
@@ -317,8 +317,8 @@
           "name": "Latest from the default branch"
         },
         "definition": {
-          "id": "buildit/digitalrig-metal-azure",
-          "name": "buildit/digitalrig-metal-azure"
+          "id": "buildit/azurerig-nodejs",
+          "name": "buildit/azurerig-nodejs"
         },
         "fetchDepth": {
           "id": "",
@@ -329,7 +329,7 @@
           "name": ""
         },
         "artifactSourceDefinitionUrl": {
-          "id": "https://github.com/buildit/digitalrig-metal-azure",
+          "id": "https://github.com/buildit/azurerig-nodejs",
           "name": ""
         }
       },

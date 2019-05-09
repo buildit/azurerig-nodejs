@@ -25,9 +25,8 @@ const run = async () => {
     const azureService: AzureService = new AzureService(params);
 
     //Login:
-    //await azureService.azureLogin();
+    await azureService.azureLogin();
 
-    /*
     //Create Common ResourceGroup
     await azureService.createCommonResourceGroup();
 
@@ -50,14 +49,13 @@ const run = async () => {
     //Create Build Master Pipeline
     await devOps.createMasterBuildPipeline();
     
+    //Create Infrastructure Pipeline
+    await devOps.createInfrastructurePipeline();
+
     //Create Release Pipeline
     await devOps.createReleasePipeline();
 
     await sleep (10000);
-    */
-
-   await devOps.createInfrastructurePipeline()
-
   } catch (e) {
     console.log(e);
   }

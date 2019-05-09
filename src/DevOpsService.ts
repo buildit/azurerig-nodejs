@@ -175,8 +175,8 @@ export default class {
                                       .replaceAll("${gitHubServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId)
                                       .replaceAll("${resourceGroupName}", this.params.azResources.baseResourceGroupName)
                                       .replaceAll("${location}", this.params.azResources.location)
-                                      .replaceAll("${appName}", this.params.azResources.appServiceName)
-                                      .replaceAll("${appUrl}", this.params.azResources.appUrl)
+                                      .replaceAll("${appName}", `${this.params.azResources.getAppUrl('Dev')}`)
+                                      .replaceAll("${appUrl}", `${this.params.azResources.getAppUrl('Dev')}`)
                                       .replaceAll("${registryName}", this.params.azResources.containerRegistryName)
                                       .replaceAll("${registryAddress}", this.params.azResources.containeRegistryAddress)
                                       .replaceAll("${projectId}", this.params.azDevOps.projectId)
@@ -205,10 +205,10 @@ export default class {
       let release = await this.connection.getReleaseApi();
 
       var tokenReplacedTemplate = JSON.stringify(createInfrastructurePipeline)
-          .replaceAll("${owner_id}", "3fd80b16-bcd3-69dc-9f21-93a354d3a8da") //this.params.azDevOps.pipelineOwner)
+          .replaceAll("${owner_id}", this.params.azDevOps.pipelineOwner)
           .replaceAll("${agentQueueId}", this.params.azDevOps.devAgenetQueueId.toString())
-          .replaceAll("${serviceConnectionId}", "97f47a63-4332-46ed-a66a-f650729893b1") // this.params.azDevOps.serviceConnectionId)
-          .replaceAll("${gitServiceConnectionId}", "ada2f83b-c4ac-46eb-9388-87ff235b6b2e")// this.params.azDevOps.gitServiceConnectionId)
+          .replaceAll("${serviceConnectionId}",  this.params.azDevOps.serviceConnectionId)
+          .replaceAll("${gitServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId)
           .replaceAll("${pipelineId}", this.params.azDevOps.devBuildPipelineId.toString())
           .replaceAll("${resourceGroupName}", this.params.azResources.baseResourceGroupName)
           .replaceAll("${stage}", "dev")
@@ -217,12 +217,12 @@ export default class {
           .replaceAll("${projectId}", this.params.azDevOps.projectId)
           .replaceAll("${imageName}", this.params.azResources.baseResourceGroupName.toLocaleLowerCase())
           .replaceAll("${imageTag}", "unstable-latest")
-          .replaceAll("${appName}", this.params.azResources.appName)
+          .replaceAll("${appName}", this.params.azResources.baseAppName)
           .replaceAll("${registryAddress}", this.params.azResources.containeRegistryAddress)
           .replaceAll("${sourcePipelineName}", "${this.params.azResources.baseResourceGroupName} Dev")
           .replaceAll("${pipelineName}", "Infrastructure Pipeline");
 
-        await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), "AndyTestIt");
+        await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
 
         console.log(chalk.green("Created Release Pipeline"));
   
