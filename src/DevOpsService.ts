@@ -18,9 +18,7 @@ export default class {
 
   constructor(private params: RigParameters) {
     let authHandler = azdev.getPersonalAccessTokenHandler(params.azDevOps.pat);
-    this.connection = new azdev.WebApi(params.azDevOps.orgName, authHandler);
-    console.log(params.azDevOps.pat)
-    console.log(params.azDevOps.orgName)
+    this.connection = new azdev.WebApi(params.azDevOps.orgUrl, authHandler);
   }
 
   async createProject(projectName: string) {
@@ -103,8 +101,7 @@ export default class {
     .replaceAll("${storageAccountKey}", this.params.azResources.storageAccountKey);  
 
     let result = await this.createBuildPipeline(tokenReplacedTemplate);
-    this.params.azDevOps.masterAgenetQueueId = (result.queue && result.queue.id) ? result.queue.id : -1;
-
+    this.params.azDevOps.masterAgentQueueId = (result.queue && result.queue.id) ? result.queue.id : -1;
     this.params.azDevOps.masterBuildPipelineId = result.id || -1;
   }
 
@@ -175,7 +172,7 @@ export default class {
                                       .replaceAll("${gitHubServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId)
                                       .replaceAll("${resourceGroupName}", this.params.azResources.baseResourceGroupName)
                                       .replaceAll("${location}", this.params.azResources.location)
-                                      .replaceAll("${appName}", `${this.params.azResources.getAppUrl('Dev')}`)
+                                      .replaceAll("${appName}", `${this.params.azResources.getAppName('Dev')}`)
                                       .replaceAll("${appUrl}", `${this.params.azResources.getAppUrl('Dev')}`)
                                       .replaceAll("${registryName}", this.params.azResources.containerRegistryName)
                                       .replaceAll("${registryAddress}", this.params.azResources.containeRegistryAddress)
@@ -195,6 +192,40 @@ export default class {
       console.log(chalk.green("Created Release Pipeline"));
     }catch(err){
       console.log(chalk.red("Error Creating Release Pipeline"));
+      console.log(err);
+    }
+  }
+
+  async createProdReleasePipeline(){
+    try{
+    console.log(chalk.blueBright("Creating Prod Release Pipeline"));
+    let release = await this.connection.getReleaseApi();
+
+    let tokenReplacedTemplate = JSON.stringify(createProdReleaseDefTemplate)
+                                      .replaceAll("${imageName}", this.params.azResources.baseResourceGroupName)
+                                      .replaceAll("${imageTag}", "latest")
+                                      .replaceAll("${owner_id}", this.params.azDevOps.pipelineOwner)
+                                      .replaceAll("${agentQueueId}", this.params.azDevOps.masterAgentQueueId.toString())
+                                      .replaceAll("${serviceConnectionId}", this.params.azDevOps.serviceConnectionId)
+                                      .replaceAll("${gitHubServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId)
+                                      .replaceAll("${resourceGroupName}", this.params.azResources.baseResourceGroupName)
+                                      .replaceAll("${location}", this.params.azResources.location)
+                                      .replaceAll("${appName}", `${this.params.azResources.baseAppName}`)
+                                      .replaceAll("${registryName}", this.params.azResources.containerRegistryName)
+                                      .replaceAll("${registryAddress}", this.params.azResources.containeRegistryAddress)
+                                      .replaceAll("${projectId}", this.params.azDevOps.projectId)
+                                      .replaceAll("${projectName}", this.params.azDevOps.projName)
+                                      .replaceAll("${pipelineId}", this.params.azDevOps.masterBuildPipelineId.toString())
+                                      .replaceAll("${pipelineName}", `${this.params.azResources.baseResourceGroupName} Prod`)
+                                      .replaceAll("${sourcePipelineName}", "${this.params.azResources.baseResourceGroupName} Master")
+                                      .replaceAll("${orgName}", this.params.azDevOps.orgName);
+
+    await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
+
+    console.log(chalk.green("Created Prod Release Pipeline"));
+    }
+    catch(err){
+      console.log(chalk.red("Error Creating Prod Release Pipeline"));
       console.log(err);
     }
   }

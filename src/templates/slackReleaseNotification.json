@@ -1,0 +1,16 @@
+{
+    "consumerActionId": "postMessageToChannel",
+    "consumerId": "slack",
+    "consumerInputs": {
+      "url": "${slackHookUrl}"
+    },
+    "eventType": "ms.vss-release.deployment-completed-event",
+    "publisherId": "rm",
+    "publisherInputs": {
+      "releaseDefinitionId": "",
+      "releaseEnvironmentId": "",
+      "releaseEnvironmentStatus": "",
+      "projectId": "${projectId}"
+    },
+    "scope": 1
+  }

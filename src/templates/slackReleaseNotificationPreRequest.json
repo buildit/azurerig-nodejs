@@ -1,0 +1,27 @@
+{
+    "subscription": {
+      "consumerActionId": "postMessageToChannel",
+      "consumerId": "slack",
+      "consumerInputs": {
+        
+      },
+      "eventType": "ms.vss-release.deployment-completed-event",
+      "publisherId": "rm",
+      "publisherInputs": {
+        "releaseDefinitionId": "",
+        "releaseEnvironmentId": "",
+        "releaseEnvironmentStatus": "",
+        "projectId": "${projectId}"
+      },
+      "scope": 1
+    },
+    "scope": 10,
+    "inputValues": [
+      {
+        "inputId": "releaseDefinitionId"
+      },
+      {
+        "inputId": "releaseEnvironmentId"
+      }
+    ]
+  }

@@ -1,0 +1,15 @@
+{
+    "consumerActionId": "postMessageToChannel",
+    "consumerId": "slack",
+    "consumerInputs": {
+      "url": "${slackHookUrl}"
+    },
+    "eventType": "build.complete",
+    "publisherId": "tfs",
+    "publisherInputs": {
+      "definitionName": "",
+      "buildStatus": "",
+      "projectId": "${projectId}"
+    },
+    "scope": 1
+  }

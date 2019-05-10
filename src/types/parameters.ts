@@ -45,7 +45,7 @@ export class AzResources {
   }
 
   get baseAppName(): string{
-    return `${this.baseAppName}AppService`;
+    return `${this.baseResourceGroupName}AppService`;
   }
 
   getAppName(stage: string): string {
@@ -74,6 +74,10 @@ export class AzDevOps {
   private _masterBuildPipelineId: number = -1;
   private _masterAgentQueueId: number = -1;
   private _pipelineOwner: string = "";
+
+  get orgUrl(): string {
+    return `https://dev.azure.com/${this.orgName}/`; 
+  }
 
   get projectId(): string {
     return this._projectId;
@@ -130,7 +134,7 @@ export class AzDevOps {
     return this._masterAgentQueueId;
   }
 
-  set masterAgenetQueueId(value: number){
+  set masterAgentQueueId(value: number){
     this._masterAgentQueueId = value;
   }
 
@@ -149,7 +153,8 @@ export class AzDevOps {
     public username: string,
     public pat: string,
     public orgName: string,
-    public projName: string
+    public projName: string,
+    public slackHookUrl: string
   ) {}
 }
 

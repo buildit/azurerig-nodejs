@@ -41,6 +41,10 @@ const run = async () => {
     //Create Git Serevice Connection
     await devOpsRest.createGitServiceConnection("Git Connection");
 
+    //Create Slackhook Notification Service Connectors
+    await devOpsRest.createSlackBuildNotifications();
+    await devOpsRest.createSlackReleaseNotifications();
+
     await sleep(10000);
 
     //Create Build Dev Pipeline
@@ -54,6 +58,9 @@ const run = async () => {
 
     //Create Release Pipeline
     await devOps.createReleasePipeline();
+
+    //Create Prod Release Pipeline
+    await devOps.createProdReleasePipeline();
 
     await sleep (10000);
   } catch (e) {
