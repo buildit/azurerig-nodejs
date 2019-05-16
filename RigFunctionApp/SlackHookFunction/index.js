@@ -10,6 +10,9 @@ module.exports = function(context, req){
             post: 443,
             path: "services/T03ALPC1R/BGDLRTZNH/YGgnmqUs7cyCXMKcwueIlBBJ",
             method: "POST",
+            body: {
+                "text": "Hello, world."
+            },
             Headers: {
                 'Content-Type': 'application/json'
             }
