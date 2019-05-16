@@ -10,7 +10,8 @@ az acr create --resource-group $1 --name $3 --sku Basic
 az storage account create \
     --name $4 \
     --resource-group $1 \
-    --location $2
+    --location $2 \
+    --sku "Standard_LRS"
 
 #Create Slack Function App
 az functionapp create \
