@@ -23,5 +23,4 @@ az functionapp create \
 #Create Alert
 az monitor alert create \
     --name ErrorLogAlert \ 
-    --description "Errors in AppInsights Trace Log" \
     --condition "Whenever the traces is greater than 1 count where SecurityLevel includes Error"
