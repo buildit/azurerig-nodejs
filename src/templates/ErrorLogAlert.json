@@ -1,0 +1,46 @@
+{
+  "location": "global",
+
+      "description": "",
+      "enabled": true,
+      "severity": 4,
+      "windowSize": "PT5M",
+      "evaluationFrequency": "PT5M",
+      "scopes": [
+        "/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Insights/components/${appInsightsName}"
+      ],
+      "criteria": {
+        "allOf": [
+          {
+            "metricName": "traces/count",
+            "metricNamespace": "Microsoft.Insights/components",
+            "operator": "GreaterThan",
+            "timeAggregation": "Count",
+            "name": "Metric1",
+            "dimensions": [
+              {
+                "name": "trace/severityLevel",
+                "operator": "Include",
+                "values": [
+                  "Error"
+                ]
+              }
+            ],
+            "monitorTemplateType": "8",
+            "criterionType": "StaticThresholdCriterion",
+            "threshold": 1
+          }
+        ],
+        "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+      },
+      "actions": [
+        {
+          "actionGroupId": "/subscriptions/${subscriptionId}/resourcegroups/${commonResourceGroup}/providers/microsoft.insights/actiongroups/${actionGroupName}",
+          "webhookProperties": { 
+          }
+        }
+      ],
+      "autoMitigate": true,
+      "targetResourceType": "Microsoft.Insights/components",
+      "targetResourceRegion": "${location}"
+}

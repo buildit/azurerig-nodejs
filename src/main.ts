@@ -26,7 +26,7 @@ const run = async () => {
 
     //Login:
     await azureService.azureLogin();
-
+/*
     //Create Common ResourceGroup
     await azureService.createCommonResourceGroup();
 
@@ -63,6 +63,14 @@ const run = async () => {
     await devOps.createProdReleasePipeline();
 
     await sleep (10000);
+*/
+  
+   // await azureService.createLogAlert();
+
+    await azureService.createFunctionApp();
+
+  
+
   } catch (e) {
     console.log(e);
   }
