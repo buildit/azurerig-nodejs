@@ -8,7 +8,7 @@ az acr create --resource-group $1 --name $3 --sku Basic
 
 #Create Storage Account
 az storage account create \
-    --name $4
+    --name $4 \
     --resource-group $1 \
     --location $2
 
@@ -23,4 +23,5 @@ az functionapp create \
 #Create Alert
 az monitor alert create \
     --name ErrorLogAlert \ 
+    --resource-group $1 \
     --condition "Whenever the traces is greater than 1 count where SecurityLevel includes Error"
