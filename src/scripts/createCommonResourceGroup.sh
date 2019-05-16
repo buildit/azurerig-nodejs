@@ -24,4 +24,4 @@ az functionapp create \
 #Create Alert
 az monitor alert create -n ErrorLogAlert \
     --resource-group $1 \
-    --condition "Whenever the traces is greater than 1 count where SecurityLevel includes Error"
+    --condition "count traces > 1 where SecurityLevel includes Error"
