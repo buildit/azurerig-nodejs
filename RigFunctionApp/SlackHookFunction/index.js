@@ -6,7 +6,7 @@ module.exports = function(context, req){
     if(req.query.name || (req.body && req.body.name)){
         
         const opts = {
-            hostname: "https://hooks.slack.com",
+            hostname: "hooks.slack.com",
             post: 443,
             path: "/services/T03ALPC1R/BGDLRTZNH/YGgnmqUs7cyCXMKcwueIlBBJ",
             method: "POST",
