@@ -18,14 +18,12 @@ module.exports = function(context, req){
             }
         };
 
-        const request = https.request(opts, (res) => {
-            console.log(`statusCode: ${res.statusCode}`);
-
-            context.res = {
+        let response = await https.request(opts);
+        console.log(`statusCode: ${res.statusCode}`);
+        context.res = {
                 //status: 200, /* Defaults to 200 */
                 body: "Hello " + (req.query.name || req.body.name)
-            };
-        });   
+        }
     } else {
         context.res = {
             status: 400,
