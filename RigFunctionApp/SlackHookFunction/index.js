@@ -1,6 +1,6 @@
 var request = require("request-promise");
 
-module.exports =function (context, req) {
+module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
     let opts = {
             method: 'POST', 
