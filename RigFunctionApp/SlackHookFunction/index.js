@@ -1,6 +1,6 @@
 var request = require("request-promise");
 
-module.exports = async function (context, req) {
+module.exports =function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
     let opts = {
             method: 'POST', 
@@ -11,10 +11,10 @@ module.exports = async function (context, req) {
             json: true
         };
 
-    await request(opts);
-
-    context.res = {
-    // status: 200, /* Defaults to 200 */
-    body: "Hello " + (req.query.name || req.body.name)
+     request(opts).then(function(body){
+        context.res = {
+            // status: 200, /* Defaults to 200 */
+            body: "Hello " + (req.query.name || req.body.name)
+     });
     };
 };
