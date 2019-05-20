@@ -16,5 +16,5 @@ module.exports =function (context, req) {
             // status: 200, /* Defaults to 200 */
             body: "Hello " + (req.query.name || req.body.name)
         };
-    };
+    });
 };
