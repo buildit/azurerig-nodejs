@@ -5,7 +5,8 @@ import * as storage from "azure-arm-storage";
 import * as monitor from "azure-arm-monitor";
 import * as website from "azure-arm-website";
 import * as container from "azure-arm-containerregistry";
-import alertTemplate from "./templates/ErrorLogAlert.json";
+import alertTemplate from "./templates/ErrorAlert.json";
+import actionGroupTemplate from "./templates/CreateActionGroup.json";
 
 import { RigParameters } from "./types/parameters";
 import * as msRest from "@azure/ms-rest-js";
@@ -27,7 +28,7 @@ export default class {
       domain: this.rigParams.azResources.tenantId
     };
    
-    this.credentials = await azure.interactiveLogin(opts);
+    this.credentials = await msRestNodeAuth.interactiveLogin(opts);
    // this.credentials = await msRestNodeAuth.interactiveLogin(opts);
     console.log(chalk.green("Successfully Logged into Azure"));
   }
@@ -144,11 +145,34 @@ export default class {
         enabled: true
       };
 
-      await client.webApps.createOrUpdate(this.rigParams.azResources.baseResourceGroupName, "NickTestFuncAppAz",  site)
+      await client.webApps.createOrUpdate(this.rigParams.azResources.baseResourceGroupName, "NickTestFuncAppAz",  site);
+
+ 
       
 
     }catch(err){
       console.log(chalk.redBright("Error creating Slack Function App"));
+      console.log(err);
+    }
+  }
+
+  async createActionGroup(){
+    try{
+      console.log(chalk.blueBright("Creating Action Group"));
+
+      let tokenReplacedTemplate = JSON.stringify(actionGroupTemplate)
+                                      .replaceAll("${slackHookUrl}", this.rigParams.azDevOps.slackHookUrl);
+
+      const client = new monitor.MonitorManagementClient(
+        this.credentials,
+        this.rigParams.azResources.subscription
+      );
+
+      await client.actionGroups.createOrUpdate(this.rigParams.azResources.baseResourceGroupName, "SlackHookError", JSON.parse(tokenReplacedTemplate));
+
+      console.log(chalk.green("Created Action Group"));
+    }catch(err){
+      console.log(chalk.redBright("Error creating Action Group"));
       console.log(err);
     }
   }
@@ -161,6 +185,9 @@ export default class {
         this.credentials,
         this.rigParams.azResources.subscription
       );
+
+      
+
 
       let tokenReplacedTemplate = JSON.stringify(errTemplate)
         .replaceAll(
@@ -175,11 +202,11 @@ export default class {
           "${appInsightsName}",
           `${this.rigParams.azResources.getAppName("Dev")}-appinsights`
         )
-        .replaceAll("${commonResourceGroup}", "ubssandbox")
-        .replaceAll("${actionGroupName}", "Slack")
+        .replaceAll("${commonResourceGroup}", this.rigParams.azResources.baseResourceGroupName)
+        .replaceAll("${actionGroupName}", "SlackHookError")
         .replaceAll("${location}", this.rigParams.azResources.location);
 
-      await client.metricAlerts.createOrUpdate(
+      await client.alertRules.createOrUpdate(
         `${this.rigParams.azResources.baseResourceGroupName}Dev`,
         "DevRule3",
         JSON.parse(tokenReplacedTemplate),
