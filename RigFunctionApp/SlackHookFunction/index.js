@@ -10,7 +10,7 @@ module.exports = async function(context, req){
     });
 
 
-    let response = await https.request(opts);
+   // let response = await https.request(opts);
     console.log(`statusCode: ${res.statusCode}`);
     context.res = {
         //status: 200, /* Defaults to 200 */
