@@ -1,6 +1,6 @@
 var request = require("request-promise");
 
-module.exports = function (context, req) {
+module.exports = asunc function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
     context.log(process.env["SLACK_HOOK_URL"]);
 
@@ -13,18 +13,10 @@ module.exports = function (context, req) {
             json: true
         };
 
-     request(opts).then(function(body){
-        context.res = {
-            status: 200, 
-            body: "Posted to Slack"
-        };
-
-        context.done(null, res);
-    }).catch(function(err){
-        context.res = {
-            status:500,
-            body: `Error Posting to Slack, ${err}`
-        }
-    });
-    ;
+     await request(opts);
+     
+    return {
+        status: 200, 
+        body: "Posted to Slack"
+    };
 };
