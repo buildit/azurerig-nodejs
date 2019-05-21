@@ -5,7 +5,7 @@ module.exports = async function (context, req) {
 
     let opts = {
             method: 'POST', 
-            uri: process.env["SLACK_HOOK_UR"],
+            uri: process.env["SLACK_HOOK_URL"],
             body: {
                 text: "Hello World!"
             },
