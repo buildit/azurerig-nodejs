@@ -2,11 +2,11 @@ var request = require("request-promise");
 
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
-    context.log(process.env["SLACK_HOOK_URL"]);
+    context.log();
 
     let opts = {
             method: 'POST', 
-            uri: 'https://hooks.slack.com/services/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',
+            uri: process.env["SLACK_HOOK_UR"],
             body: {
                 text: "Hello World!"
             },
