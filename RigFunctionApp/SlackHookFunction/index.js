@@ -2,7 +2,7 @@ var request = require("request-promise");
 
 module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
-    conotext.log(process.env["SLACK_HOOK_URL"]);
+    context.log(process.env["SLACK_HOOK_URL"]);
 
     let opts = {
             method: 'POST', 
