@@ -7,7 +7,7 @@ module.exports = async function (context, req) {
             method: 'POST', 
             uri: process.env["SLACK_HOOK_URL"],
             body: {
-                text: `An error has been recorded in the logs.  Error <${req.errorUrl}| Error>`.
+                text: `An error has been recorded in the logs.  Error <${req.errorUrl}| Error>.`
             },
             json: true
         };
