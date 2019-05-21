@@ -13,10 +13,16 @@ module.exports = async function (context, req) {
 
      request(opts).then(function(body){
         context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
+            status: 200, 
+            body: "Posted to Slack"
         };
 
-        context.done();
+        context.done(null, res);
+    }).catch(function(err){
+        context.res = {
+            status:500.
+            body: `Error Posting to Slack, ${err}`
+        }
     });
+    ;
 };

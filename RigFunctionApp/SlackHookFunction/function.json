@@ -6,7 +6,7 @@
           "name": "req",
           "type": "httpTrigger",
           "authLevel": "anonymous",
-          "methods": ["get"]
+          "methods": ["post"]
         },
         {
           "direction": "out",
