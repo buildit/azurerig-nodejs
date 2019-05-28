@@ -22,6 +22,6 @@ az functionapp create \
      --runtime node
 
 #Create Alert
-az monitor alert create -n ErrorLogAlert \
+az monitor metrics alert create -n ErrorLogAlert \
     --resource-group $1 \
     --condition "count traces > 1 where SecurityLevel includes Error"

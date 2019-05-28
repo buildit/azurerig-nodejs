@@ -5,17 +5,18 @@ import * as storage from "azure-arm-storage";
 import * as monitor from "azure-arm-monitor";
 import * as website from "azure-arm-website";
 import * as container from "azure-arm-containerregistry";
-import alertTemplate from "./templates/ErrorAlert.json";
+import alertTemplate from "./templates/ErrorLogAlert.json";
 import actionGroupTemplate from "./templates/CreateActionGroup.json";
+import * as moment from 'moment';
 
 import { RigParameters } from "./types/parameters";
-import * as msRest from "@azure/ms-rest-js";
-import * as msRestAzure from "@azure/ms-rest-azure-js";
-import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
-import { MonitorManagementClient, MonitorManagementModels, MonitorManagementMappers } from "@azure/arm-monitor";
-import { Site } from "azure-arm-website/lib/models";
+//import * as msRest from "@azure/ms-rest-js";
+//import * as msRestAzure from "@azure/ms-rest-azure-js";
+//import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
+//import { MonitorManagementClient, MonitorManagementModels, MonitorManagementMappers } from "@azure/arm-monitor";
+//import { Site } from "azure-arm-website/lib/models";
 
-let errTemplate = require('./templates/ErrorLogAlert.json');
+
 
 export default class {
   private credentials: any;
@@ -28,31 +29,35 @@ export default class {
       domain: this.rigParams.azResources.tenantId
     };
    
-    this.credentials = await msRestNodeAuth.interactiveLogin(opts);
-   // this.credentials = await msRestNodeAuth.interactiveLogin(opts);
+    this.credentials = await azure.interactiveLogin(opts);
     console.log(chalk.green("Successfully Logged into Azure"));
   }
 
   async createCommonResourceGroup() {
-    console.log(chalk.blueBright("Creating Common Resource Group"));
+    try{
+      console.log(chalk.blueBright("Creating Common Resource Group"));
 
-    var groupParameters = {
-      location: this.rigParams.azResources.location
-    };
+      var groupParameters = {
+        location: this.rigParams.azResources.location
+      };
 
-    let resourceClient = new rm.ResourceManagementClient.ResourceManagementClient(this.credentials,
-      this.rigParams.azResources.subscription);
+      let resourceClient = new rm.ResourceManagementClient.ResourceManagementClient(this.credentials,
+        this.rigParams.azResources.subscription);
 
-    //Create ResourceGroup
-    var results = await resourceClient.resourceGroups.createOrUpdate(
-      this.rigParams.azResources.baseResourceGroupName,
-      groupParameters
-    );
+      //Create ResourceGroup
+      var results = await resourceClient.resourceGroups.createOrUpdate(
+        this.rigParams.azResources.baseResourceGroupName,
+        groupParameters
+      );
 
-    //Save ResourceGroupId
-    this.rigParams.azResources.resourceGroupId = results.id || "";
+      //Save ResourceGroupId
+      this.rigParams.azResources.resourceGroupId = results.id || "";
 
-    console.log(chalk.green("Created Common Resource Group in Azure"));
+      console.log(chalk.green("Created Common Resource Group in Azure"));
+    }catch(err){
+      console.log(chalk.red("Error created Common Resource Group in Azure"));
+      console.log(err);
+    }
 
     //Add Storage Account
     await this.createCommonStorageAccount();
@@ -139,16 +144,13 @@ export default class {
       let client = new website.WebSiteManagementClient(this.credentials,
         this.rigParams.azResources.subscription);
 
-      let site : Site= {
+      let site : website.WebSiteManagementModels.Site= {
         kind: "functionapp",
         location: this.rigParams.azResources.location,
         enabled: true
       };
 
-      await client.webApps.createOrUpdate(this.rigParams.azResources.baseResourceGroupName, "NickTestFuncAppAz",  site);
-
- 
-      
+      await client.webApps.createOrUpdate(this.rigParams.azResources.baseResourceGroupName, this.rigParams.azResources.slackFuncName,  site);
 
     }catch(err){
       console.log(chalk.redBright("Error creating Slack Function App"));
@@ -161,7 +163,10 @@ export default class {
       console.log(chalk.blueBright("Creating Action Group"));
 
       let tokenReplacedTemplate = JSON.stringify(actionGroupTemplate)
-                                      .replaceAll("${slackHookUrl}", this.rigParams.azDevOps.slackHookUrl);
+                                      .replaceAll("${actionGroupName}", `${this.rigParams.azResources.baseResourceGroupName}AG`)
+                                      .replaceAll("${slackFunc}", this.rigParams.azResources.slackFuncName)
+                                      .replaceAll("${subscriptionId}", this.rigParams.azResources.subscription)
+                                      .replaceAll("${resourceGroup}", this.rigParams.azResources.baseResourceGroupName);
 
       const client = new monitor.MonitorManagementClient(
         this.credentials,
@@ -181,15 +186,12 @@ export default class {
     try {
       console.log(chalk.blueBright("Creating Alert"));
 
-      const client = new MonitorManagementClient(
+      const client = new monitor.MonitorManagementClient(
         this.credentials,
         this.rigParams.azResources.subscription
       );
 
-      
-
-
-      let tokenReplacedTemplate = JSON.stringify(errTemplate)
+      let tokenReplacedTemplate = JSON.stringify(alertTemplate)
         .replaceAll(
           "${subscriptionId}",
           this.rigParams.azResources.subscription
@@ -205,11 +207,16 @@ export default class {
         .replaceAll("${commonResourceGroup}", this.rigParams.azResources.baseResourceGroupName)
         .replaceAll("${actionGroupName}", "SlackHookError")
         .replaceAll("${location}", this.rigParams.azResources.location);
+        
+        let payload =  JSON.parse(tokenReplacedTemplate);
+        payload.evaluationFrequency = moment.duration(5, 'minutes');
+        payload.windowSize = moment.duration(5, 'minutes');
+  
 
-      await client.alertRules.createOrUpdate(
+      await client.metricAlerts.createOrUpdate(
         `${this.rigParams.azResources.baseResourceGroupName}Dev`,
-        "DevRule3",
-        JSON.parse(tokenReplacedTemplate),
+        "ErrorLogAlert",
+        payload
       );
 
       console.log(chalk.green("Created Alert"));

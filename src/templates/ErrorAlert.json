@@ -1,0 +1,38 @@
+{
+    "type": "microsoft.insights/scheduledqueryrules",
+    "location": "global",
+    "name": "SlackHookError",
+    "severity": 4,
+    "description": "",
+    "displayName": "SlackHookError",
+    "isEnabled": true,
+    "windowSize": "PT5M",
+    "evaluationFrequency": "PT5M",
+    "source": {
+      "query": "traces  \n| where severityLevel == 3\n| where timestamp  > now(-5m)\n",
+      "dataSourceId": "/subscriptions/736bac69-1352-4801-8b8f-567e37804014/resourceGroups/AzRigDev/providers/Microsoft.Insights/components/AzRigAppServiceDev-appinsights",
+      "queryType": "ResultCount",
+      "authorizedResources": [
+        
+      ]
+    },
+    "schedule": {
+      "frequencyInMinutes": 5,
+      "timeWindowInMinutes": 5
+    },
+    "action": {
+      "severity": "3",
+      "aznsAction": {
+        "actionGroup": [
+          "/subscriptions/736bac69-1352-4801-8b8f-567e37804014/resourcegroups/azrig/providers/microsoft.insights/actiongroups/slackhook"
+        ],
+        "customWebhookPayload": "{\n\"username\": \"AzRig Slackbot\",\n\"text\":\"An error has been recorded in the logs.  <#linktosearchresults|Error>\"\n}"
+      },
+      "trigger": {
+        "thresholdOperator": "GreaterThan",
+        "threshold": 0,
+        "consecutiveBreach": 1
+      },
+      "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
+    }
+}

@@ -26,7 +26,7 @@ const run = async () => {
 
     //Login:
     await azureService.azureLogin();
-/*
+
     //Create Common ResourceGroup
     await azureService.createCommonResourceGroup();
 
@@ -53,23 +53,27 @@ const run = async () => {
     //Create Build Master Pipeline
     await devOps.createMasterBuildPipeline();
     
-    //Create Infrastructure Pipeline
-    await devOps.createInfrastructurePipeline();
-
     //Create Release Pipeline
     await devOps.createReleasePipeline();
 
     //Create Prod Release Pipeline
     await devOps.createProdReleasePipeline();
 
+    //Create Infrastructure Pipeline
+    await devOps.createInfrastructurePipeline();
+
     await sleep (10000);
-*/
-  
-   // await azureService.createLogAlert();
 
-    await azureService.createFunctionApp();
+    //Create Build Pipeline for AzFunction to poast log alerts to Slack
+    await devOps.createSlackFunctionBuildPipeline();
+
+     //Create Release Pipeline for AzFunction to poast log alerts to Slack
+    await devOps.createSlackFunctionReleasePipeline();
 
   
+    await azureService.createActionGroup();
+ 
+    await azureService.createLogAlert();
 
   } catch (e) {
     console.log(e);

@@ -53,7 +53,7 @@ export default class {
 
   async createGitServiceConnection(serviceConnectionName: string) {
     try {
-      console.log(chalk.blueBright("Creating Slack Build Service Connection"));
+      console.log(chalk.blueBright("Creating Git Service Connection"));
       let replacedTemplate = JSON.stringify(createGitServiceConnectionTemplate)
         .replaceAll("${gitServiceConnectionId}", "$(uuidgen)")
         .replaceAll("${gitPAT}", this.params.gitParams.pat)
@@ -75,9 +75,9 @@ export default class {
       );
 
       this.params.azDevOps.gitServiceConnectionId = results.id;
-      console.log(chalk.green("Created Slack Build Service Connection"));
+      console.log(chalk.green("Created Git Service Connection"));
     } catch (err) {
-      console.log(chalk.red("Error Creating Slack Build Service Connection"));
+      console.log(chalk.red("Error Creating Git Service Connection"));
     }
   }
 

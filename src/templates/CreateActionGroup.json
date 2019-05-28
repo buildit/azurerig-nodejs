@@ -1,0 +1,17 @@
+{
+  "location": "Global",
+  "tags": {
+    
+  },
+  "enabled": true,
+  "groupShortName": "${actionGroupName}",
+  "azureFunctionReceivers": [
+    {
+      "functionAppResourceId": "/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${slackFunc}",
+      "httpTriggerUrl": "https://${slackFunc}.azurewebsites.net/api/SlackHookFunction",
+      "functionName": "SlackHookFunction",
+      "useCommonAlertSchema": true,
+      "name": "${actionGroupName}"
+    }
+    ]
+}

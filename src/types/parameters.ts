@@ -56,6 +56,11 @@ export class AzResources {
     return `https://${this.getAppName(stage)}.azurewebsites.net/`;
   }
 
+  get slackFuncName(): string{
+    return `${this.baseResourceGroupName}SlackFunc`;
+  }
+ 
+
   constructor(
     public tenantId: string,
     public subscription: string,
@@ -71,8 +76,10 @@ export class AzDevOps {
   private _gitServiceConnectionId: string = "";
   private _devBuildPipelineId: number = -1;
   private _devAgentQueueId: number = -1;
+  private _slackFuncAgentQueueId: number =-1;
   private _masterBuildPipelineId: number = -1;
   private _masterAgentQueueId: number = -1;
+  private _slackFuncBuildPipelineId: number = -1;
   private _pipelineOwner: string = "";
 
   get orgUrl(): string {
@@ -142,12 +149,26 @@ export class AzDevOps {
     return this._pipelineOwner;
   }
 
-
   set pipelineOwner(value:string){
     this._pipelineOwner = value;
   }
 
- 
+  get slackFuncBuildPipelineId(): number{
+    return this._slackFuncBuildPipelineId;
+  }
+
+  set slackFuncBuildPipelineId(value:number){
+    this._slackFuncBuildPipelineId = value;
+  }
+
+  get slackFuncAgentQueueId(): number{
+    return this._slackFuncAgentQueueId;
+  }
+
+  set slackFuncAgentQueueId(value:number){
+    this._slackFuncAgentQueueId = value;
+  }
+
 
   constructor(
     public username: string,

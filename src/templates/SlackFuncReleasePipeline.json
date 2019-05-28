@@ -1,0 +1,330 @@
+{
+    "source": 2,
+    "revision": 56,
+    "description": null,
+    "createdBy": {
+      "displayName": "AzRig",
+      "_links": {
+        "avatar": {
+        }
+      },
+      "id": "3fd80b16-bcd3-69dc-9f21-93a354d3a8da",
+      "uniqueName": "AzRig",
+      "descriptor": "aad.M2ZkODBiMTYtYmNkMy03OWRjLTlmMjEtOTNhMzU0ZDNhOGRh"
+    },
+    "isDeleted": false,
+    "variables": {
+      
+    },
+    "variableGroups": [
+      
+    ],
+    "environments": [
+      {
+        "id": 7,
+        "name": "Stage 1",
+        "rank": 1,
+        "owner": {
+          "displayName": "AzRig",
+          "_links": {
+            "avatar": {
+            }
+          },
+          "id": "3fd80b16-bcd3-69dc-9f21-93a354d3a8da",
+          "uniqueName": "AzRig",
+          "descriptor": "aad.M2ZkODBiMTYtYmNkMy03OWRjLTlmMjEtOTNhMzU0ZDNhOGRh"
+        },
+        "variables": {
+          
+        },
+        "variableGroups": [
+          
+        ],
+        "preDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 19
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": 1
+          }
+        },
+        "deployStep": {
+          "id": 20
+        },
+        "postDeployApprovals": {
+          "approvals": [
+            {
+              "rank": 1,
+              "isAutomated": true,
+              "isNotificationOn": false,
+              "id": 21
+            }
+          ],
+          "approvalOptions": {
+            "requiredApproverCount": null,
+            "releaseCreatorCanBeApprover": false,
+            "autoTriggeredAndPreviousEnvironmentApprovedCanBeSkipped": false,
+            "enforceIdentityRevalidation": false,
+            "timeoutInMinutes": 0,
+            "executionOrder": 2
+          }
+        },
+        "deployPhases": [
+          {
+            "deploymentInput": {
+              "parallelExecution": {
+                "parallelExecutionType": 0
+              },
+              "agentSpecification": null,
+              "skipArtifactsDownload": false,
+              "artifactsDownloadInput": {
+                "downloadInputs": [
+                  
+                ]
+              },
+              "queueId": "${slackFuncAgentQueueId}",
+              "demands": [
+                
+              ],
+              "enableAccessToken": false,
+              "timeoutInMinutes": 0,
+              "jobCancelTimeoutInMinutes": 1,
+              "condition": "succeeded()",
+              "overrideInputs": {
+                
+              }
+            },
+            "rank": 1,
+            "phaseType": 1,
+            "name": "Run on agent",
+            "refName": null,
+            "workflowTasks": [
+              {
+                "environment": {
+                  
+                },
+                "taskId": "501dd25d-1785-43e4-b4e5-a5c78ccc0573",
+                "version": "1.*",
+                "name": "Azure Function App Deploy: AzRigFunc",
+                "refName": "",
+                "enabled": true,
+                "alwaysRun": false,
+                "continueOnError": false,
+                "timeoutInMinutes": 0,
+                "definitionType": "task",
+                "overrideInputs": {
+                  
+                },
+                "condition": "succeeded()",
+                "inputs": {
+                  "azureSubscription": "${serviceConnectionId}",
+                  "appType": "functionApp",
+                  "appName": "${slackFuncName}",
+                  "deployToSlotOrASE": "false",
+                  "resourceGroupName": "${resourceGroupName}",
+                  "slotName": "production",
+                  "package": "$(System.DefaultWorkingDirectory)/_SlackAzFunc/drop/*.zip",
+                  "runtimeStack": "",
+                  "startUpCommand": "",
+                  "customWebConfig": "",
+                  "appSettings": "-SLACK_HOOK_URL ${slackHookUrl} -FUNCTIONS_EXTENSION_VERSION ~2 -FUNCTIONS_WORKER_RUNTIME node -WEBSITE_NODE_DEFAULT_VERSION 10.14.1",
+                  "configurationStrings": "",
+                  "deploymentMethod": "auto"
+                }
+              }
+            ]
+          }
+        ],
+        "environmentOptions": {
+          "emailNotificationType": "OnlyOnFailure",
+          "emailRecipients": "release.environment.owner;release.creator",
+          "skipArtifactsDownload": false,
+          "timeoutInMinutes": 0,
+          "enableAccessToken": false,
+          "publishDeploymentStatus": true,
+          "badgeEnabled": false,
+          "autoLinkWorkItems": false,
+          "pullRequestDeploymentEnabled": false
+        },
+        "demands": [
+          
+        ],
+        "conditions": [
+          {
+            "name": "ReleaseStarted",
+            "conditionType": 1,
+            "value": ""
+          }
+        ],
+        "executionPolicy": {
+          "concurrencyCount": 1,
+          "queueDepthCount": 0
+        },
+        "schedules": [
+          
+        ],
+        "retentionPolicy": {
+          "daysToKeep": 30,
+          "releasesToKeep": 3,
+          "retainBuild": true
+        },
+        "processParameters": {
+          "dataSourceBindings": [
+            {
+              "dataSourceName": "AzureFunctionAppNamesByAppType",
+              "parameters": {
+                "WebAppKind": "$(AppType)"
+              },
+              "endpointId": "$(AzureSubscription)",
+              "target": "AppName"
+            }
+          ]
+        },
+        "properties": {
+          
+        },
+        "preDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": [
+            
+          ]
+        },
+        "postDeploymentGates": {
+          "id": 0,
+          "gatesOptions": null,
+          "gates": [
+            
+          ]
+        },
+        "environmentTriggers": [
+          
+        ]
+      }
+    ],
+    "artifacts": [
+      {
+        "sourceId": "79dabbcb-66f5-43d7-ab9c-ac3b70f08cce:286",
+        "type": "Build",
+        "alias": "_SlackAzFunc",
+        "definitionReference": {
+          "artifactSourceDefinitionUrl": {
+            "id": "https://dev.azure.com/${orgname}/_permalink/_build/index?collectionId=$(System.CollectionId)&projectId=${projectId}&definitionId=${pipelineId}",
+            "name": ""
+          },
+          "defaultVersionBranch": {
+            "id": "",
+            "name": ""
+          },
+          "defaultVersionSpecific": {
+            "id": "",
+            "name": ""
+          },
+          "defaultVersionTags": {
+            "id": "",
+            "name": ""
+          },
+          "defaultVersionType": {
+            "id": "latestType",
+            "name": "Latest"
+          },
+          "definition": {
+            "id": "${pipelineId}",
+            "name": "${sourcePipelineName}"
+          },
+          "definitions": {
+            "id": "",
+            "name": ""
+          },
+          "IsMultiDefinitionType": {
+            "id": "False",
+            "name": "False"
+          },
+          "project": {
+            "id": "${projectId}",
+            "name": "${projectName}"
+          }
+        },
+        "isRetained": false
+      },
+      {
+        "sourceId": "${gitServiceConnectionId}:buildit/azurerig-nodejs",
+        "type": "GitHub",
+        "alias": "_buildit_azurerig-nodejs",
+        "definitionReference": {
+          "artifactSourceDefinitionUrl": {
+            "id": "https://github.com/buildit/azurerig-nodejs",
+            "name": ""
+          },
+          "branch": {
+            "id": "master",
+            "name": "master"
+          },
+          "checkoutNestedSubmodules": {
+            "id": "True",
+            "name": "Any nested submodules within"
+          },
+          "checkoutSubmodules": {
+            "id": "",
+            "name": ""
+          },
+          "connection": {
+            "id": "${gitServiceConnectionId}",
+            "name": "Git Connection"
+          },
+          "defaultVersionSpecific": {
+            "id": "",
+            "name": ""
+          },
+          "defaultVersionType": {
+            "id": "latestFromBranchType",
+            "name": "Latest from the default branch"
+          },
+          "definition": {
+            "id": "buildit/azurerig-nodejs",
+            "name": "buildit/azurerig-nodejs"
+          },
+          "fetchDepth": {
+            "id": "",
+            "name": ""
+          },
+          "gitLfsSupport": {
+            "id": "",
+            "name": ""
+          }
+        },
+        "isPrimary": true,
+        "isRetained": false
+      }
+    ],
+    "triggers": [
+      
+    ],
+    "releaseNameFormat": "Release-$(rev:r)",
+    "tags": [
+      
+    ],
+    "pipelineProcess": {
+      "type": 1
+    },
+    "properties": {
+      "DefinitionCreationSource": {
+        "$type": "System.String",
+        "$value": "ReleaseNew"
+      }
+    },
+    "id": 4,
+    "name": "SlackFunction Release",
+    "path": "\\",
+    "projectReference":null
+}

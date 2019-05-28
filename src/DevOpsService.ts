@@ -7,6 +7,8 @@ import * as createBuildDefTemplate from "./templates/createBuildPipeline.json";
 import * as createReleaseDefTemplate from "./templates/CreateReleasePipeline.json";
 import * as createProdReleaseDefTemplate from "./templates/createProdReleasePipeline.json";
 import * as createInfrastructurePipeline from "./templates/createInfrastructurePipeline.json";
+import * as createSlackFunctionBuildPipeline from "./templates/CreateAzSlackFuncBuildPipeline.json";
+import * as createSlackFunctionReleasePipeline from "./templates/SlackFuncReleasePipeline.json";
 import "./extensions/string.extensions";
 import { IBuildApi } from "azure-devops-node-api/BuildApi";
 import { OperationReference } from "azure-devops-node-api/interfaces/common/OperationsInterfaces";
@@ -189,6 +191,7 @@ export default class {
 
       await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
 
+
       console.log(chalk.green("Created Release Pipeline"));
     }catch(err){
       console.log(chalk.red("Error Creating Release Pipeline"));
@@ -259,6 +262,57 @@ export default class {
   
     }catch(err){
       console.log("Error while creating infrastructure pipeline");
+      console.log(err);
+    }
+  }
+
+  async createSlackFunctionBuildPipeline(){
+    try{
+      console.log(chalk.blueBright("Creating slack function build pipeline."));
+      let build = await this.connection.getBuildApi();
+
+      let tokenReplacedTemplate = JSON.stringify(createSlackFunctionBuildPipeline)
+          .replaceAll("${projectId}", this.params.azDevOps.projectId)
+          .replaceAll("${imageName}", this.params.azResources.baseResourceGroupName.toLocaleLowerCase())
+          .replaceAll("${gitServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId);
+
+      let result = await build.createDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
+
+      this.params.azDevOps.slackFuncBuildPipelineId = result.id || -1;
+      this.params.azDevOps.slackFuncAgentQueueId = (result.queue && result.queue.id) ? result.queue.id : -1;
+  
+      console.log(chalk.green("Created slack function build pipeline."));
+  
+    }catch(err){
+      console.log("Error creating slack function build pipeline.");
+      console.log(err);
+    }
+  }
+
+  async createSlackFunctionReleasePipeline(){
+    try{
+      console.log(chalk.blueBright("Creating slack function release pipeline."));
+      let release = await this.connection.getReleaseApi();
+
+      var tokenReplacedTemplate = JSON.stringify(createSlackFunctionReleasePipeline)
+          .replaceAll("${subscriptionId}", this.params.azResources.subscription)
+          .replaceAll("${slackFuncName}", this.params.azResources.slackFuncName)
+          .replaceAll("${orgname}", this.params.azDevOps.orgName)
+          .replaceAll("${projectId}", this.params.azDevOps.projectId)
+          .replaceAll("${projectName}", this.params.azDevOps.projName)
+          .replaceAll("${pipelineId}", this.params.azDevOps.slackFuncBuildPipelineId.toString())
+          .replaceAll("${sourcePipelineName}", "Slack Azure Functions Build")
+          .replaceAll("${slackFuncAgentQueueId}", this.params.azDevOps.slackFuncAgentQueueId.toString())
+          .replaceAll("${resourceGroupName}", this.params.azResources.baseResourceGroupName)
+          .replaceAll("${slackHookUrl}", this.params.azDevOps.slackHookUrl)
+          .replaceAll("${serviceConnectionId}", this.params.azDevOps.serviceConnectionId)
+          .replaceAll("${gitServiceConnectionId}", this.params.azDevOps.gitServiceConnectionId);
+    
+      await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
+
+      console.log(chalk.green("Created slack function release pipeline."));
+    }catch(err){
+      console.log("Error creating slack function release pipeline.");
       console.log(err);
     }
   }
