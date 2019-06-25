@@ -1,5 +1,4 @@
 import chalk from "chalk";
-var shell = require('shelljs');
 import * as azdev from "azure-devops-node-api";
 import * as coreInterfaces from "azure-devops-node-api/interfaces/CoreInterfaces";
 import * as graphInterfaces from "azure-devops-node-api/interfaces/GraphInterfaces";

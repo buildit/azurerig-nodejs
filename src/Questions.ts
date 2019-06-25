@@ -2,7 +2,7 @@ import inquirer, { Questions } from "inquirer";
 import {RigParameters, AzResources, AzDevOps, GitParams} from "./types/parameters";
 
 const askQuestions = async () => {
-  const questions = [
+  const questions : any = [
     {
       name: "TENANT_ID",
       type: "input",
