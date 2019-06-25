@@ -2,8 +2,6 @@
 import sleep from "./extensions/sleep";
 import chalk from "chalk";
 import figlet from "figlet";
-import path from "path";
-import program from "commander";
 import askQuestions from "./questions";
 import DevOpsService from "./DevOpsService";
 import AzureService from "./AzureService";
@@ -62,17 +60,19 @@ const run = async () => {
     //Create Infrastructure Pipeline
     await devOps.createInfrastructurePipeline();
 
-    await sleep (10000);
-
     //Create Build Pipeline for AzFunction to poast log alerts to Slack
     await devOps.createSlackFunctionBuildPipeline();
 
-     //Create Release Pipeline for AzFunction to poast log alerts to Slack
+    //Create Release Pipeline for AzFunction to poast log alerts to Slack
     await devOps.createSlackFunctionReleasePipeline();
 
-  
+    //Trigger Build
+    await devOps.createSlackFunction();
+
+    //Create Alerting Action Group
     await azureService.createActionGroup();
  
+    //Create Log Alert
     await azureService.createLogAlert();
 
   } catch (e) {

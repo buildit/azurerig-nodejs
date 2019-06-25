@@ -8,14 +8,7 @@ import * as container from "azure-arm-containerregistry";
 import alertTemplate from "./templates/ErrorLogAlert.json";
 import actionGroupTemplate from "./templates/CreateActionGroup.json";
 import * as moment from 'moment';
-
 import { RigParameters } from "./types/parameters";
-//import * as msRest from "@azure/ms-rest-js";
-//import * as msRestAzure from "@azure/ms-rest-azure-js";
-//import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
-//import { MonitorManagementClient, MonitorManagementModels, MonitorManagementMappers } from "@azure/arm-monitor";
-//import { Site } from "azure-arm-website/lib/models";
-
 
 
 export default class {

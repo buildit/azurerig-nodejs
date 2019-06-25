@@ -1,4 +1,5 @@
 import chalk from "chalk";
+var shell = require('shelljs');
 import * as azdev from "azure-devops-node-api";
 import * as coreInterfaces from "azure-devops-node-api/interfaces/CoreInterfaces";
 import * as graphInterfaces from "azure-devops-node-api/interfaces/GraphInterfaces";
@@ -14,6 +15,8 @@ import { IBuildApi } from "azure-devops-node-api/BuildApi";
 import { OperationReference } from "azure-devops-node-api/interfaces/common/OperationsInterfaces";
 import { ICoreApi } from "azure-devops-node-api/CoreApi";
 import { BuildDefinition } from "azure-devops-node-api/interfaces/BuildInterfaces";
+import { ReleaseReason, ReleaseStatus, EnvironmentStatus } from "azure-devops-node-api/interfaces/ReleaseInterfaces";
+import sleep from "./extensions/sleep";
 
 export default class {
   private connection: azdev.WebApi;
@@ -123,7 +126,8 @@ export default class {
       if(err.result.typeKey == "InvalidProjectException"){
         console.log(chalk.yellow("Azure DevOps project still being provisioned"));
         return await this.createBuildPipeline(parameterizedTempalate);
-      }else if(err.result.typeKey == "PipelineValidationException" && err.result.message.includes(this.params.azDevOps.serviceConnectionId)){
+      }else if(err.result.typeKey == "PipelineValidationException" && 
+          (err.result.message.includes(this.params.azDevOps.serviceConnectionId) || err.result.message.includes(this.params.azDevOps.gitServiceConnectionId))){
         console.log(chalk.yellow("Service Connection is still being provisioned"));
         return await this.createBuildPipeline(parameterizedTempalate);
       }else {
@@ -256,14 +260,47 @@ export default class {
           .replaceAll("${sourcePipelineName}", "${this.params.azResources.baseResourceGroupName} Dev")
           .replaceAll("${pipelineName}", "Infrastructure Pipeline");
 
-        await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
+        let releaseDef = await release.createReleaseDefinition(JSON.parse(tokenReplacedTemplate), this.params.azDevOps.projName);
+    
+        console.log(chalk.green(`Created Release Pipeline: DefenitionId ${releaseDef.id}`));
 
-        console.log(chalk.green("Created Release Pipeline"));
+        console.log(chalk.blueBright(`Kicking off new release of defenition ${releaseDef.id}`));
+        let createdRelease = await release.createRelease({definitionId: releaseDef.id}, this.params.azDevOps.projName);
+        console.log(chalk.green(`Release Defenition ${releaseDef.id} started`));
+        
+        let releaseResults : any = await release.getRelease(this.params.azDevOps.projName, createdRelease.id || 0);
+        let condition = releaseResults.environments[0].status === EnvironmentStatus.Succeeded && 
+                        releaseResults.environments[1].status === EnvironmentStatus.Succeeded &&
+                        releaseResults.environments[2].status === EnvironmentStatus.Succeeded
+        
+        while(!condition){
+          releaseResults = await release.getRelease(this.params.azDevOps.projName, createdRelease.id || 0);
+          condition = releaseResults.environments[0].status === EnvironmentStatus.Succeeded && 
+                        releaseResults.environments[1].status === EnvironmentStatus.Succeeded &&
+                        releaseResults.environments[2].status === EnvironmentStatus.Succeeded
+
+          console.log(`Environment 1 Complete: ${releaseResults.environments[0].status === EnvironmentStatus.Succeeded}`);
+          console.log(`Environment 2 Complete: ${releaseResults.environments[1].status === EnvironmentStatus.Succeeded}`);
+          console.log(`Environment 3 Complete: ${releaseResults.environments[2].status === EnvironmentStatus.Succeeded}`);
+
+          console.log(chalk.yellow(`Release ${createdRelease.id} not yet created, sleeping for 2 minutes`));
+          await sleep(120000);
+        }
+
+        console.log(chalk.green(`Release ${createdRelease.id} created`));
   
     }catch(err){
       console.log("Error while creating infrastructure pipeline");
       console.log(err);
     }
+  }
+
+  async createSlackFunction(){
+    await this.createSlackFunctionBuildPipeline();
+
+    await this.createSlackFunctionReleasePipeline();
+
+    await this.triggerSlackFunctionBuild();
   }
 
   async createSlackFunctionBuildPipeline(){
@@ -281,8 +318,7 @@ export default class {
       this.params.azDevOps.slackFuncBuildPipelineId = result.id || -1;
       this.params.azDevOps.slackFuncAgentQueueId = (result.queue && result.queue.id) ? result.queue.id : -1;
   
-      console.log(chalk.green("Created slack function build pipeline."));
-  
+      console.log(chalk.green("Created slack function build pipeline."));  
     }catch(err){
       console.log("Error creating slack function build pipeline.");
       console.log(err);
@@ -315,5 +351,10 @@ export default class {
       console.log("Error creating slack function release pipeline.");
       console.log(err);
     }
+  }
+
+  async triggerSlackFunctionBuild() {
+    let build = await this.connection.getBuildApi();
+    await build.queueBuild({definition: {id: this.params.azDevOps.slackFuncBuildPipelineId}}, this.params.azDevOps.projName);
   }
 }

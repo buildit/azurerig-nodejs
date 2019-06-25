@@ -25,6 +25,7 @@
     "@types/request-promise": "^4.1.42",
     "async-request": "^1.2.0",
     "azure-arm-containerregistry": "^5.0.0",
+    "azure-arm-insights": "^1.0.2-preview",
     "azure-arm-monitor": "^5.4.0",
     "azure-arm-resource": "^7.3.0",
     "azure-arm-storage": "^8.0.0",

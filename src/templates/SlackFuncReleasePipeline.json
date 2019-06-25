@@ -308,7 +308,13 @@
       }
     ],
     "triggers": [
-      
+      {
+        "artifactAlias": "_slackAzFunc",
+        "triggerConditions": [
+
+        ],
+        "triggerType": 1
+      }
     ],
     "releaseNameFormat": "Release-$(rev:r)",
     "tags": [

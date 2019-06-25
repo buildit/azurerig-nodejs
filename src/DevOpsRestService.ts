@@ -61,7 +61,7 @@ export default class {
 
       let results: any = await request.post(
         `${this.params.azDevOps.orgUrl}/${
-          this.params.azDevOps.projName
+          this.params.azDevOps.projectId
         }/_apis/serviceendpoint/endpoints?api-version=5.1-preview.1`,
         {
           json: JSON.parse(replacedTemplate),
@@ -78,6 +78,7 @@ export default class {
       console.log(chalk.green("Created Git Service Connection"));
     } catch (err) {
       console.log(chalk.red("Error Creating Git Service Connection"));
+      console.log(err);
     }
   }
 
