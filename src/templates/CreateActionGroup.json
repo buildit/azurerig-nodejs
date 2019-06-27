@@ -4,7 +4,7 @@
     
   },
   "enabled": true,
-  "groupShortName": "${actionGroupName}",
+  "groupShortName": "AG",
   "azureFunctionReceivers": [
     {
       "functionAppResourceId": "/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${slackFunc}",

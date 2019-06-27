@@ -67,7 +67,7 @@ const run = async () => {
     await devOps.createSlackFunctionReleasePipeline();
 
     //Trigger Build
-    await devOps.createSlackFunction();
+    await devOps.triggerSlackFunctionBuild();
 
     //Create Alerting Action Group
     await azureService.createActionGroup();

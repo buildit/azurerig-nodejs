@@ -116,7 +116,7 @@ export default class {
 
       var temp = JSON.parse(parameterizedTempalate);
 
-       var result = await build.createDefinition(<any>temp, this.params.azDevOps.projName);
+      var result = await build.createDefinition(<any>temp, this.params.azDevOps.projName);
 
        console.log(chalk.green("Created Build Pipeline"));
        return result;
@@ -292,14 +292,6 @@ export default class {
       console.log("Error while creating infrastructure pipeline");
       console.log(err);
     }
-  }
-
-  async createSlackFunction(){
-    await this.createSlackFunctionBuildPipeline();
-
-    await this.createSlackFunctionReleasePipeline();
-
-    await this.triggerSlackFunctionBuild();
   }
 
   async createSlackFunctionBuildPipeline(){
