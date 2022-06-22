@@ -17,7 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/arm-monitor": "^5.4.0",
-    "@azure/ms-rest-nodeauth": "^1.0.1",
+    "@azure/ms-rest-nodeauth": "^3.0.8",
     "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.0.0",
     "@types/replace-string": "^2.0.0",
